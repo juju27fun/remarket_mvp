@@ -2,6 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { API_FULL_URL } from '../../src/utils/constants';
 import { formatDate } from '../../src/utils/format';
+import {
+  getAccessToken,
+  isAuthenticated,
+  refreshAccessToken
+} from '../../src/utils/auth';
 
 const OrderSummary = () => {
   const [summary, setSummary] = useState({
@@ -16,7 +21,15 @@ const OrderSummary = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const { data } = await axios.get(`${API_FULL_URL}/orders/summary`);
+        let accessToken = getAccessToken();
+        if (!isAuthenticated()) {
+          accessToken = await refreshAccessToken();
+        }
+        const { data } = await axios.get(`${API_FULL_URL}/orders/summary`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`
+          }
+        });
         setSummary(data);
       } catch (error) {
         setError('Error fetching order summary');
@@ -41,13 +54,13 @@ const OrderSummary = () => {
     <div>
       <h1>Order Summary</h1>
       <h2>Total Users</h2>
-      <p>{summary.users[0].numUsers}</p>
+      <p>{summary.users[0]?.numUsers ?? 0}</p>
 
       <h2>Total Orders</h2>
-      <p>{summary.orders[0].numOrders}</p>
+      <p>{summary.orders[0]?.numOrders ?? 0}</p>
 
       <h2>Total Sales</h2>
-      <p>${summary.orders[0].totalSales.toFixed(2)}</p>
+      <p>${summary.orders[0]?.totalSales?.toFixed(2) ?? 0.00}</p>
 
       <h2>Daily Orders</h2>
       <table>

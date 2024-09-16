@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_BASE_URL, API_FULL_URL } from '../../src/utils/constant';
 import { useRouter } from 'next/router';
+import apiService from '../../src/services/apiService';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const UploadedImage = () => {
   const router = useRouter();
@@ -14,13 +14,11 @@ const UploadedImage = () => {
     if (filename) {
       const fetchImage = async () => {
         try {
-          const response = await axios.get(`${API_FULL_URL}/upload/${filename}`, {
-            responseType: 'blob'
-          });
-          const imageUrl = URL.createObjectURL(response.data);
+          const response = await apiService.getData(`uploads/${filename}`, { responseType: 'blob' });
+          const imageUrl = URL.createObjectURL(response);
           setImageSrc(imageUrl);
         } catch (err) {
-          setError('Error fetching the image');
+          setError(`Error fetching the image: ${err.message}`);
         } finally {
           setLoading(false);
         }

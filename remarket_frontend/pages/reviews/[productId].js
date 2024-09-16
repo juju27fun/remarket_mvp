@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_FULL_URL } from '../../src/utils/constant';
 import { useRouter } from 'next/router';
+import apiService from '../../src/services/apiService';
+import { API_BASE_URL } from '../../src/utils/constants';
 
 const ProductDetails = () => {
   const router = useRouter();
@@ -14,7 +14,7 @@ const ProductDetails = () => {
     if (productId) {
       const fetchProduct = async () => {
         try {
-          const { data } = await axios.get(`${API_FULL_URL}/products/${productId}`);
+          const data = await apiService.getData(`products/${productId}`);
           setProduct(data);
         } catch (err) {
           setError('Error fetching product details');
@@ -22,7 +22,6 @@ const ProductDetails = () => {
           setLoading(false);
         }
       };
-
       fetchProduct();
     }
   }, [productId]);
@@ -35,7 +34,7 @@ const ProductDetails = () => {
     <div>
       <h1>{product.name}</h1>
       <img
-        src={`${API_BASE_URL}/uploads/${product.image}`} 
+        src={`${API_BASE_URL}/uploads/${product.image}`}
         alt={`${product.name} image`}
         style={{ maxWidth: '100%', height: 'auto' }}
       />
@@ -47,7 +46,6 @@ const ProductDetails = () => {
       <p>Stock: {product.countInStock}</p>
       <p>Rating: {product.rating}</p>
       <p>Reviews: {product.numReviews}</p>
-      {/* Render the reviews */}
       <div>
         <h2>Reviews</h2>
         {product.reviews?.length > 0 ? (

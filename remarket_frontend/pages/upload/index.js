@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { API_FULL_URL } from '../../src/utils/constant';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import { useRouter } from "next/router";
+import apiService from '../../src/services/apiService';
 
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadStatus, setUploadStatus] = useState('');
+  const [uploadStatus, setUploadStatus] = useState("");
   const router = useRouter();
 
   const handleFileChange = (event) => {
@@ -15,23 +14,23 @@ const UploadPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedFile) {
-      setUploadStatus('Please select a file to upload.');
+      setUploadStatus("Please select a file to upload.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('image', selectedFile);
+    formData.append("image", selectedFile);
 
     try {
-      const response = await axios.post(`${API_FULL_URL}/upload`, formData, {
+      const response = await apiService.postData('upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
-      setUploadStatus('File uploaded successfully.');
-      router.push(`/upload/${response.data.filename}`);
+      setUploadStatus("File uploaded successfully.");
+      router.push(`/upload/${response.filename}`);
     } catch (error) {
-      setUploadStatus('Error uploading file.');
+      setUploadStatus("Error uploading file.");
     }
   };
 

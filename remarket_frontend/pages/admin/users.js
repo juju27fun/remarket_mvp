@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
+import apiService from "../../src/services/apiService"; // Import the apiService
 import Button from '../../src/components/Button'; // Import the custom Button component
 
 const Users = () => {
@@ -11,11 +11,7 @@ const Users = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const { data } = await axios.get("/api/v1/users", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
+        const data = await apiService.getData("users"); // Use apiService getData method
         setUsers(data);
       } catch (error) {
         console.error("Error fetching users", error);
@@ -30,11 +26,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`/api/v1/users/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
+        await apiService.deleteData(`users/${id}`); // Use apiService deleteData method
         setUsers(users.filter((user) => user._id !== id));
       } catch (error) {
         console.error("Error deleting user", error);

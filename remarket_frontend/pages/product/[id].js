@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_FULL_URL } from '../../src/utils/constant';
 import { useRouter } from 'next/router';
+import apiService from '../../src/services/apiService';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const ProductDetails = () => {
   const router = useRouter();
@@ -14,10 +14,10 @@ const ProductDetails = () => {
     if (id) {
       const fetchProduct = async () => {
         try {
-          const response = await axios.get(`${API_FULL_URL}/products/${id}`);
-          setProduct(response.data);
+          const productData = await apiService.getData(`products/${id}`);
+          setProduct(productData);
         } catch (err) {
-          setError('Error fetching product details');
+          setError(`Error fetching product details: ${err.message}`);
         } finally {
           setLoading(false);
         }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { API_FULL_URL } from '../../src/utils/constant';
+import apiService from '../../src/services/apiService';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const CategoryPage = () => {
   const [categories, setCategories] = useState([]);
@@ -10,10 +10,10 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${API_FULL_URL}/products/categories`);
-        setCategories(response.data);
+        const categoryData = await apiService.getData('products/categories');
+        setCategories(categoryData);
       } catch (err) {
-        setError('Error fetching categories');
+        setError(`Error fetching categories: ${err.message}`);
       } finally {
         setLoading(false);
       }

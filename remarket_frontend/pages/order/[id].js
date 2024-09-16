@@ -8,6 +8,7 @@ const OrderDetails = () => {
   const { id } = router.query; // Extract the order ID from the URL
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -17,6 +18,7 @@ const OrderDetails = () => {
           setOrder(data);
         } catch (error) {
           console.error('Error fetching order details', error);
+          setError('Error fetching order details. Please try again.');
         } finally {
           setLoading(false);
         }
@@ -28,6 +30,10 @@ const OrderDetails = () => {
 
   if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
   }
 
   if (!order) {

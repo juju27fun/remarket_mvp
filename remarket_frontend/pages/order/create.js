@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { API_FULL_URL } from '../../src/utils/constants';
+import Button from '../../src/components/Button';
+import {
+  getAccessToken,
+  isAuthenticated,
+  refreshAccessToken,
+} from '../../src/utils/auth';
 
 const CreateOrder = () => {
   const router = useRouter();
@@ -15,15 +21,13 @@ const CreateOrder = () => {
   });
   const [paymentMethod, setPaymentMethod] = useState('PayPal');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch cart items (this would be implemented based on your app's state management)
     const fetchCartItems = async () => {
-      // Example logic to fetch cart items from local storage or API
       const storedItems = localStorage.getItem('cartItems');
       setCartItems(storedItems ? JSON.parse(storedItems) : []);
     };
-
     fetchCartItems();
   }, []);
 
@@ -36,15 +40,28 @@ const CreateOrder = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post(`${API_FULL_URL}/orders`, {
-        orderItems: cartItems,
-        shippingAddress,
-        paymentMethod,
-      });
+      let accessToken = getAccessToken();
+      if (!isAuthenticated()) {
+        accessToken = await refreshAccessToken();
+      }
+      const { data } = await axios.post(
+        `${API_FULL_URL}/orders`,
+        {
+          orderItems: cartItems,
+          shippingAddress,
+          paymentMethod,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       console.log('Order created:', data);
-      router.push(`/order/${data.order._id}`); // Redirect to the order details page
+      router.push(`/order/${data._id}`); // Redirect to the order details page
     } catch (error) {
       console.error('Error creating order', error);
+      setError('Error creating order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -53,6 +70,7 @@ const CreateOrder = () => {
   return (
     <div>
       <h1>Create New Order</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <h2>Shipping Address</h2>
         <div>
@@ -114,7 +132,7 @@ const CreateOrder = () => {
               value="PayPal"
               checked={paymentMethod === 'PayPal'}
               onChange={(e) => setPaymentMethod(e.target.value)}
-            /> 
+            />
             PayPal
           </label>
         </div>
@@ -126,13 +144,13 @@ const CreateOrder = () => {
               value="Stripe"
               checked={paymentMethod === 'Stripe'}
               onChange={(e) => setPaymentMethod(e.target.value)}
-            /> 
+            />
             Stripe
           </label>
         </div>
-        <button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Placing Order...' : 'Place Order'}
-        </button>
+        </Button>
       </form>
 
       <h2>Order Items</h2>
