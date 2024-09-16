@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const CreateOrder = () => {
   const router = useRouter();
@@ -35,13 +36,13 @@ const CreateOrder = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post('/api/v1/orders', {
+      const { data } = await axios.post(`${API_FULL_URL}/orders`, {
         orderItems: cartItems,
         shippingAddress,
         paymentMethod,
       });
       console.log('Order created:', data);
-      router.push(`/order/${data._id}`); // Redirect to the order details page
+      router.push(`/order/${data.order._id}`); // Redirect to the order details page
     } catch (error) {
       console.error('Error creating order', error);
     } finally {

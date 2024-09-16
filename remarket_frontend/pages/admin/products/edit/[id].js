@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { API_FULL_URL } from '../../../src/utils/constants'; // Adjust the path as necessary
+import Button from '../../../src/components/Button'; // Adjust the path as necessary
 
 const EditProduct = () => {
   const router = useRouter();
   const { id } = router.query; // Get the dynamic product ID from the URL
+
   const [product, setProduct] = useState({
     name: '',
     price: '',
@@ -12,14 +15,20 @@ const EditProduct = () => {
     // ... other product fields
   });
 
+  const [error, setError] = useState('');
+
   useEffect(() => {
-    // Fetch product data when the component is mounted
     const fetchProduct = async () => {
       try {
-        const { data } = await axios.get(`/api/v1/product/${id}`);
+        const { data } = await axios.get(`${API_FULL_URL}/product/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+          },
+        });
         setProduct(data);
       } catch (error) {
         console.error('Error fetching product data', error);
+        setError('Error fetching product data. Please try again.');
       }
     };
 
@@ -36,30 +45,56 @@ const EditProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/api/v1/product/${id}`, product);
+      await axios.put(`${API_FULL_URL}/product/${id}`, product, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
       router.push('/admin/products'); // Redirect to the products list page
     } catch (error) {
       console.error('Error updating product', error);
+      setError('Error updating product. Please try again.');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Name</label>
-        <input type="text" name="name" value={product.name} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Price</label>
-        <input type="number" name="price" value={product.price} onChange={handleChange} />
-      </div>
-      <div>
-        <label>Description</label>
-        <textarea name="description" value={product.description} onChange={handleChange}></textarea>
-      </div>
-      {/* Add other product fields as needed */}
-      <button type="submit">Update Product</button>
-    </form>
+    <div>
+      <h1>Edit Product</h1>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Name</label>
+          <input
+            type="text"
+            name="name"
+            value={product.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Price</label>
+          <input
+            type="number"
+            name="price"
+            value={product.price}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Description</label>
+          <textarea
+            name="description"
+            value={product.description}
+            onChange={handleChange}
+            required
+          ></textarea>
+        </div>
+        {/* Add other product fields as needed */}
+        <Button type="submit">Update Product</Button>
+      </form>
+    </div>
   );
 };
 

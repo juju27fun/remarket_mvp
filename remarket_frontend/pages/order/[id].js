@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const OrderDetails = () => {
   const router = useRouter();
@@ -12,7 +13,7 @@ const OrderDetails = () => {
     if (id) {
       const fetchOrder = async () => {
         try {
-          const { data } = await axios.get(`/api/v1/orders/${id}`);
+          const { data } = await axios.get(`${API_FULL_URL}/orders/${id}`);
           setOrder(data);
         } catch (error) {
           console.error('Error fetching order details', error);

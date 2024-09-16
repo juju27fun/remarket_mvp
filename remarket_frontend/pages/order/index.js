@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const OrderList = () => {
   const [orders, setOrders] = useState([]);
@@ -11,7 +12,7 @@ const OrderList = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const { data } = await axios.get('/api/v1/orders');
+        const { data } = await axios.get(`${API_FULL_URL}/orders`);
         setOrders(data);
       } catch (error) {
         setError('Error fetching orders');
