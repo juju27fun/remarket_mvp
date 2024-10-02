@@ -45,6 +45,8 @@ const OrderSchema = new mongoose.Schema(
     paidAt: { type: Date },
     isDelivered: { type: Boolean, default: false },
     deliveredAt: { type: Date },
+    paymentIntentId: { type: String }, // Stripe Payment Intent ID
+    transactionId: { type: String }, // Stripe Transaction ID
   },
   {
     timestamps: true,

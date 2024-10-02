@@ -10,6 +10,7 @@ const {
   deleteUser,
   updateUser,
   refreshAccessToken,
+  updateKYCDetails,
 } = require('../controlers/UserControlers.js');
 const expressAsyncHandler = require('express-async-handler');
 const { isAdmin, isAuth} = require('../utils.js');
@@ -26,5 +27,6 @@ userRouter.put('/profile', isAuth, expressAsyncHandler(updateUserProfile));
 userRouter.get('/', isAuth, isAdmin, expressAsyncHandler(getUsers));
 userRouter.delete('/:id', isAuth, isAdmin, expressAsyncHandler(deleteUser));
 userRouter.put('/:id', isAuth, isAdmin, expressAsyncHandler(updateUser));
+userRouter.put('/kyc', isAuth, expressAsyncHandler(updateKYCDetails));
 
 module.exports = userRouter;

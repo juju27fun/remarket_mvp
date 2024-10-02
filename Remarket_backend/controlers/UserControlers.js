@@ -5,6 +5,43 @@ const { generateTokens } = require('../utils.js');
 const data = require('./user_set');  // Adjust the path as necessary
 const jwt = require('jsonwebtoken');
 
+// KYC Verification
+const updateKYCDetails = expressAsyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    user.kycDetails.dob = req.body.dob || user.kycDetails.dob;
+    user.kycDetails.address = req.body.address || user.kycDetails.address;
+    user.kycDetails.city = req.body.city || user.kycDetails.city;
+    user.kycDetails.postalCode = req.body.postalCode || user.kycDetails.postalCode;
+    user.kycDetails.country = req.body.country || user.kycDetails.country;
+    user.kycDetails.documentType = req.body.documentType || user.kycDetails.documentType;
+    user.kycDetails.documentNumber = req.body.documentNumber || user.kycDetails.documentNumber;
+
+    const isKYCValid = (
+      user.kycDetails.dob && 
+      user.kycDetails.address && 
+      user.kycDetails.city &&
+      user.kycDetails.postalCode &&
+      user.kycDetails.country &&
+      user.kycDetails.documentType &&
+      user.kycDetails.documentNumber.match(/^\d+$/) // Example check: Ensure document number is numeric
+    );
+    
+    if (isKYCValid) {
+      user.seller.kycStatus = 'verified'; // Update status after verification
+    } else {
+      user.seller.kycStatus = 'pending';
+    }
+    const updatedUser = await user.save();
+    res.send({
+      message: 'KYC details updated successfully',
+      kycStatus: updatedUser.seller.kycStatus,
+    });
+  } else {
+    res.status(404).send({ message: 'User not found' });
+  }
+});
+
 const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || 'refreshsecret';
 
 
@@ -182,4 +219,5 @@ module.exports = {
   deleteUser,
   updateUser,
   refreshAccessToken,
+  updateKYCDetails,
 };

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { API_FULL_URL } from '../../src/utils/constants';
 import Button from '../../src/components/Button';
+import StripeCheckout from '../../src/components/StripeCheckout';
 import {
   getAccessToken,
   isAuthenticated,
@@ -80,6 +81,9 @@ const MyOrders = () => {
               <td>{order.isDelivered ? `Delivered on ${new Date(order.deliveredAt).toLocaleString()}` : 'Not Delivered'}</td>
               <td>
                 <Button onClick={() => handleViewDetails(order._id)}>View Details</Button>
+                {!order.isPaid && (
+                  <StripeCheckout amount={order.totalPrice * 100} />
+                )}
               </td>
             </tr>
           ))}

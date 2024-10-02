@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-// const validator = require('validator');
 
 const UserSchema = new mongoose.Schema(
   {
@@ -15,6 +14,16 @@ const UserSchema = new mongoose.Schema(
       description: String,
       rating: { type: Number, default: 0, required: true },
       numReviews: { type: Number, default: 0, required: true },
+      kycStatus: { type: String, enum: ['pending', 'verified', 'unverified'], default: 'unverified' }, // KYC status
+    },
+    kycDetails: { // KYC details
+      dob: Date,
+      address: String,
+      city: String,
+      postalCode: String,
+      country: String,
+      documentType: String,
+      documentNumber: String,
     },
   },
   {

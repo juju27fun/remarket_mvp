@@ -3,6 +3,26 @@ const Order = require('../models/OrderModel.js');
 const User = require('../models/UserModel.js');
 const Product = require('../models/ProductModel.js');
 const { sendOrderEmail } = require('../utils.js'); // Importer Nodemailer utils
+const Stripe = require('stripe');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+const createStripePaymentIntent = expressAsyncHandler(async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount, // amount in cents
+      currency: 'usd',
+    });
+
+    res.status(200).send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+});
+
 
 const getAllOrders = expressAsyncHandler(async (req, res) => {
   const seller = req.query.seller || '';
@@ -69,6 +89,7 @@ const createOrder = expressAsyncHandler(async (req, res) => {
       taxPrice: req.body.taxPrice,
       totalPrice: req.body.totalPrice,
       user: req.user._id,
+      paymentIntentId: req.body.paymentIntentId,
     });
     const createdOrder = await order.save();
     res.status(201).send({ message: 'New Order Created', order: createdOrder });
@@ -162,4 +183,5 @@ module.exports = {
   deleteOrder,
   deliverOrder,
   removeItemFromProductMiddleware,
+  createStripePaymentIntent,
 };

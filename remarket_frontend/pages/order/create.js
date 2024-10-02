@@ -8,6 +8,7 @@ import {
   isAuthenticated,
   refreshAccessToken,
 } from '../../src/utils/auth';
+import StripeCheckout from '../../src/components/StripeCheckout';
 
 const CreateOrder = () => {
   const router = useRouter();
@@ -39,11 +40,13 @@ const CreateOrder = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       let accessToken = getAccessToken();
       if (!isAuthenticated()) {
         accessToken = await refreshAccessToken();
       }
+
       const { data } = await axios.post(
         `${API_FULL_URL}/orders`,
         {
@@ -57,8 +60,9 @@ const CreateOrder = () => {
           },
         }
       );
+
       console.log('Order created:', data);
-      router.push(`/order/${data._id}`); // Redirect to the order details page
+      router.push(`/order/${data._id}`);
     } catch (error) {
       console.error('Error creating order', error);
       setError('Error creating order. Please try again.');
@@ -66,6 +70,8 @@ const CreateOrder = () => {
       setLoading(false);
     }
   };
+
+  const totalPrice = cartItems.reduce((accum, item) => accum + item.price * item.qty, 0);
 
   return (
     <div>
@@ -135,8 +141,6 @@ const CreateOrder = () => {
             />
             PayPal
           </label>
-        </div>
-        <div>
           <label>
             <input
               type="radio"
@@ -148,6 +152,7 @@ const CreateOrder = () => {
             Stripe
           </label>
         </div>
+        {paymentMethod === 'Stripe' && <StripeCheckout amount={totalPrice * 100} />} {/* Stripe amount is in cents */}
         <Button type="submit" disabled={loading}>
           {loading ? 'Placing Order...' : 'Place Order'}
         </Button>
