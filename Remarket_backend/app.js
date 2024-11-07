@@ -1,13 +1,19 @@
 const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
-
+const cors = require('cors');
 const app = express();
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
+// Configuration CORS
+const corsOptions = {
+  origin: 'http://localhost:8000', // Remplacez par l'URL de votre frontend
+  optionsSuccessStatus: 200, // Pour les navigateurs qui nécessitent une réponse 204
+};
 
+app.use(cors(corsOptions));
 const OrderRouter = require('./routers/OrderRouter');
 const ProductRouter = require('./routers/ProductRouter');
 const UserRouter = require('./routers/UserRouter');
@@ -24,8 +30,7 @@ app.use('/api/v1/uploads', uploadRouter);
 app.use('/api/v1/order', OrderRouter);
 app.use('/api/v1/product', ProductRouter);
 app.use('/api/v1/users', UserRouter);
-// Ajoutez cette ligne si vous avez un router pour les uploads
-// app.use('/api/uploads', uploadRouter);
+
 
 // Configuration pour PayPal et Google API (si nécessaire)
 app.get('/api/config/paypal', (req, res) => {

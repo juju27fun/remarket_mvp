@@ -2,9 +2,18 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const http = require('http');
 const { Server } = require('socket.io');
+const axios = require('axios');
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');
+
+axios.get('https://api.ipify.org?format=json')
+.then(response => {
+  console.log('Server IP Address:', response.data.ip);
+})
+.catch(error => {
+  console.error('Error fetching IP address:', error);
+});
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',

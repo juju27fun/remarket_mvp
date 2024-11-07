@@ -9,4 +9,4 @@ run = ["sh", "-c", "npm startall"]
 
 [[ports]]
 localPort = 3000
-externalPort = 80
+externalPort = 8000
