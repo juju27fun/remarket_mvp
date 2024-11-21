@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import { API_FULL_URL } from '../../src/utils/constants';
-import Button from '../../src/components/Button';
+import { API_FULL_URL } from '../../../src/utils/constants';
+import Button from '../../../src/components/Button';
 
 const CreateOrder = () => {
   const router = useRouter();

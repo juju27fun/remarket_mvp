@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../src/services/apiService';
+import apiService from '../../src/services/apiService';
 import { API_FULL_URL } from '../src/utils/constants';
 import Link from 'next/link';
-import Header from '../src/components/Header';
-import Footer from '../src/components/Footer';
+import Header from '../../src/components/Header';
+import Footer from '../../src/components/Footer';
 
 const HomePage = () => {
   const [products, setProducts] = useState([]);

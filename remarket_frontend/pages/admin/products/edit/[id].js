@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { API_FULL_URL } from '../../../../src/utils/constants';
 import Button from '../../../../src/components/Button';
-import { getAccessToken, isAuthenticated, refreshAccessToken } from '../../../src/utils/auth';
+import { getAccessToken, isAuthenticated, refreshAccessToken } from '../../../../src/utils/auth';
 
 const EditProduct = () => {
   const router = useRouter();
