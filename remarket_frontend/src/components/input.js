@@ -1,7 +1,7 @@
 // remarket_frontend/src/components/Input.js
 import React from 'react';
 import PropTypes from 'prop-types';
-import './globals.css';
+import '../styles/globals.css';
 
 const Input = ({ type, value, onChange, placeholder }) => (
   <input

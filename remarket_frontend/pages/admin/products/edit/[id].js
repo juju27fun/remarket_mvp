@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Button from '../../../../src/components/Button'; 
-import { getAccessToken, isAuthenticated, refreshAccessToken } from '../../../src/utils/auth';
+import { getAccessToken, isAuthenticated, refreshAccessToken } from '../../../../src/utils/auth';
 import { API_FULL_URL } from '../../../../src/utils/constants'; // Assuming this is the correct path
 
 const EditProduct = () => {

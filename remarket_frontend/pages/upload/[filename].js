@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import apiService from '../../src/services/apiService';
-import { API_FULL_URL } from '../../src/utils/constants';
 
 const UploadedImage = () => {
   const router = useRouter();

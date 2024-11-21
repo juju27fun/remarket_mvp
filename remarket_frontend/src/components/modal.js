@@ -1,7 +1,7 @@
 // remarket_frontend/src/components/Modal.js
 import React from 'react';
 import PropTypes from 'prop-types';
-import './Modal.css'; // Ensure you create this CSS file for styling
+import '../styles/Modal.css'; // Ensure you create this CSS file for styling
 
 const Modal = ({ isOpen, onClose, children }) => {
   if (!isOpen) return null;

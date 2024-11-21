@@ -1,7 +1,7 @@
 // remarket_frontend/src/components/Button.js
 import React from 'react';
 import PropTypes from 'prop-types';
-import './globals.css';
+import '../styles/globals.css';
 
 const Button = ({ type, onClick, children }) => (
   <button type={type} onClick={onClick} className="btn">
