@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 // Configuration CORS
 const corsOptions = {
-  origin: 'http://localhost:8000', // Remplacez par l'URL de votre frontend
+  origin: 'http://localhost:3000', // Remplacez par l'URL de votre frontend
   optionsSuccessStatus: 200, // Pour les navigateurs qui nécessitent une réponse 204
 };
 
