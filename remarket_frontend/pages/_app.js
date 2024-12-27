@@ -1,6 +1,8 @@
-// remarket_frontend/src/App.js
-import "../styles/globals.css";
-import { useEffect } from "react";
+
+import '../src/styles/globals.css'; // Adjust the path if needed
+import '../src/components/Header';
+import '../src/components/Footer';
+import '../src/components/navbar';
 
 function MyApp({ Component, pageProps }) {
   useEffect(() => {

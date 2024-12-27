@@ -1,7 +1,6 @@
 // remarket_frontend/src/components/NavBar.js
 import React from 'react';
 import Link from 'next/link';
-import '../styles/globals.css';
 
 const NavBar = () => (
   <nav className="navbar">

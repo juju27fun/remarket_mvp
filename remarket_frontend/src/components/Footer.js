@@ -1,7 +1,6 @@
 // remarket_frontend/src/components/Footer.js
 import React from 'react';
 import Link from 'next/link';
-import '../styles/globals.css';
 
 const Footer = () => (
   <footer className="footer">
