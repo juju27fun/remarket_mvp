@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_FULL_URL } from '../utils/constants';
-import jwt_decode from 'jwt-decode'; // To decode JWT token if needed
+import jwt from 'jsonwebtoken';
 
 const ACCESS_TOKEN_KEY = 'accessToken';
 const REFRESH_TOKEN_KEY = 'refreshToken';
@@ -55,7 +55,7 @@ export const isAuthenticated = () => {
 
   try {
     // Verify token validity and expiration
-    const decoded = jwt_decode(accessToken);
+    const decoded = jwt(accessToken);
     if (decoded.exp * 1000 < Date.now()) {
       // Token is expired
       return false;

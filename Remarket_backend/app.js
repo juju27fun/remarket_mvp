@@ -12,8 +12,8 @@ const corsOptions = {
   origin: 'http://localhost:3000', // Remplacez par l'URL de votre frontend
   optionsSuccessStatus: 200, // Pour les navigateurs qui nécessitent une réponse 204
 };
-
 app.use(cors(corsOptions));
+
 const OrderRouter = require('./routers/OrderRouter');
 const ProductRouter = require('./routers/ProductRouter');
 const UserRouter = require('./routers/UserRouter');
@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
 // Ajoutez cette ligne si vous avez un dossier d'uploads
 // app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
 
 app.use('/api/v1/uploads', uploadRouter);
 app.use('/api/v1/order', OrderRouter);

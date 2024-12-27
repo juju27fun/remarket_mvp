@@ -32,7 +32,7 @@ const Profile = () => {
           return;
         }
 
-        const response = await axios.get(`${API_FULL_URL}/api/v1/users/profile`, {
+        const response = await axios.get(`${API_FULL_URL}/users/profile`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -76,7 +76,7 @@ const Profile = () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const response = await axios.put(
-        `${API_FULL_URL}/api/v1/users/profile`,
+        `${API_FULL_URL}/users/profile`,
         formState,
         {
           headers: {

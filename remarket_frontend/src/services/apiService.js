@@ -2,8 +2,6 @@ import axios from 'axios';
 import { API_FULL_URL } from '../utils/constants';
 import { getAccessToken } from '../utils/auth'; // A utility to get access token if you have one
 
-// 1) PROBLEM: Incomplete function declaration (missing braces and body).
-//    FIX: Add the function body or remove the unused declaration.
 export async function fetchData(endpoint) {
   try {
     const url = `${API_FULL_URL}/${endpoint}`;

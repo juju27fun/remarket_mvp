@@ -34,7 +34,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post(`${API_FULL_URL}/register`, formState);
+      const response = await axios.post(`${API_FULL_URL}/users/register`, formState);
       const data = response.data;
 
       localStorage.setItem('accessToken', data.accessToken);
@@ -42,6 +42,7 @@ const Register = () => {
 
       router.push('/');
     } catch (error) {
+      console.error('Registration Error:', error);
       setError('Failed to register. Please check your inputs and try again.');
     }
   };

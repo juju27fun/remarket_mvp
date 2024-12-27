@@ -1,5 +1,5 @@
-
-import '../src/styles/globals.css'; // Adjust the path if needed
+import React, { useEffect } from 'react';
+import '../src/styles/globals.css';
 import '../src/components/Header';
 import '../src/components/Footer';
 import '../src/components/navbar';
