@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { API_FULL_URL } from '../../src/utils/constants';
 import Button from '../../src/components/Button';
-import StripeCheckout from '../../src/components/StripeCheckout';
+import Link from 'next/link';
 import {
   getAccessToken,
   isAuthenticated,
@@ -41,54 +41,50 @@ const MyOrders = () => {
     fetchMyOrders();
   }, []);
 
-  const handleViewDetails = (id) => {
-    router.push(`/order/${id}`);
+  const handleViewDetails = (orderId) => {
+    router.push(`/order/${orderId}`);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (orders.length === 0) {
-    return <div>No orders found</div>;
-  }
 
   return (
     <div>
+      <nav>
+        <Link href="/">Home</Link>
+        <Link href="/profile">Profile</Link>
+        <Link href="/order">Order Index</Link>
+      </nav>
       <h1>My Orders</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Order Date</th>
-            <th>Total Price</th>
-            <th>Payment Status</th>
-            <th>Delivery Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {orders.map((order) => (
-            <tr key={order._id}>
-              <td>{order._id}</td>
-              <td>{new Date(order.createdAt).toLocaleString()}</td>
-              <td>${order.totalPrice.toFixed(2)}</td>
-              <td>{order.isPaid ? `Paid on ${new Date(order.paidAt).toLocaleString()}` : 'Not Paid'}</td>
-              <td>{order.isDelivered ? `Delivered on ${new Date(order.deliveredAt).toLocaleString()}` : 'Not Delivered'}</td>
-              <td>
-                <Button onClick={() => handleViewDetails(order._id)}>View Details</Button>
-                {!order.isPaid && (
-                  <StripeCheckout amount={order.totalPrice * 100} />
-                )}
-              </td>
+      {loading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Order Date</th>
+              <th>Total Price</th>
+              <th>Payment Status</th>
+              <th>Delivery Status</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {orders.map((order) => (
+              <tr key={order._id}>
+                <td>{order._id}</td>
+                <td>{new Date(order.createdAt).toLocaleString()}</td>
+                <td>${order.totalPrice.toFixed(2)}</td>
+                <td>{order.isPaid ? `Paid on ${new Date(order.paidAt).toLocaleString()}` : 'Not Paid'}</td>
+                <td>{order.isDelivered ? `Delivered on ${new Date(order.deliveredAt).toLocaleString()}` : 'Not Delivered'}</td>
+                <td>
+                  <Button onClick={() => handleViewDetails(order._id)}>View Details</Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

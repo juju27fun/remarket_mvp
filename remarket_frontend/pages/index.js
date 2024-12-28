@@ -2,11 +2,14 @@
 
 import React from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
 import Header from '../src/components/Header';
 import Footer from '../src/components/Footer';
-import Link from 'next/link';
+import { useAuth } from '../src/hooks/useAuth';
 
 const HomePage = () => {
+  const { isAuthenticated, isAdmin } = useAuth(); // Custom hook to check authentication and admin status
+
   return (
     <div>
       <Head>
@@ -45,6 +48,43 @@ const HomePage = () => {
           <h2>Ready to get started?</h2>
           <Link href="/register"><a className="btn">Sign Up Now</a></Link>
         </section>
+
+        <section className="signin">
+          <h2>Already have an account?</h2>
+          <Link href="/signin"><a className="btn">Sign In</a></Link>
+        </section>
+
+        {isAuthenticated && (
+          <>
+            <section className="profile">
+              <h2>My Account</h2>
+              <Link href="/profile"><a className="btn">Profile</a></Link>
+            </section>
+
+            <section className="orders">
+              <h2>My Orders</h2>
+              <Link href="/order"><a className="btn">Orders</a></Link>
+            </section>
+          </>
+        )}
+
+        <section className="products">
+          <h2>Products</h2>
+          <Link href="/product"><a className="btn">All Products</a></Link>
+          <Link href="/product/category"><a className="btn">Product Categories</a></Link>
+        </section>
+
+        {isAdmin && (
+          <section className="admin-products">
+            <h2>Admin Products</h2>
+            <Link href="/admin/products/index"><a className="btn">Manage Products</a></Link>
+          </section>
+        )}
+
+        <section className="upload">
+          <h2>Upload</h2>
+          <Link href="/upload"><a className="btn">Upload Files</a></Link>
+        </section>
       </main>
 
       <Footer />
@@ -67,7 +107,6 @@ const HomePage = () => {
           color: white;
           padding: 10px 20px;
           border-radius: 5px;
-          text-decoration: none;
         }
         .features {
           text-align: center;
@@ -96,7 +135,13 @@ const HomePage = () => {
         .call-to-action h2 {
           margin-bottom: 20px;
         }
-
+        .signin, .profile, .orders, .products, .admin-products, .upload {
+          text-align: center;
+          padding: 50px 20px;
+        }
+        .signin h2, .profile h2, .orders h2, .products h2, .admin-products h2, .upload h2 {
+          margin-bottom: 20px;
+        }
         @media (max-width: 768px) {
           .feature-cards {
             flex-direction: column;

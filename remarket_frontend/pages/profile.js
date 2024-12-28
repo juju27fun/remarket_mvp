@@ -7,6 +7,7 @@ import { API_FULL_URL } from '../src/utils/constants';
 import Header from '../src/components/Header';
 import Footer from '../src/components/Footer';
 import { isEmailValid, isPasswordStrong } from '../src/utils/validation';
+import Link from 'next/link';
 
 const Profile = () => {
   const router = useRouter();
@@ -98,6 +99,12 @@ const Profile = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    router.push('/signin');
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="error">{error}</p>;
 
@@ -168,6 +175,13 @@ const Profile = () => {
           )}
           <button type="submit">Update Profile</button>
         </form>
+        <button onClick={handleLogout}>Logout</button>
+        <div className="links">
+          <Link href="/"><a>Home</a></Link>
+          <Link href="/product"><a>Browse Products</a></Link>
+          <Link href="/order"><a>View Orders</a></Link>
+          <Link href="/order/mine"><a>My Orders</a></Link>
+        </div>
       </div>
 
       <Footer />
@@ -213,6 +227,18 @@ const Profile = () => {
           color: red;
           text-align: center;
           margin-bottom: 10px;
+        }
+        .links {
+          text-align: center;
+          margin-top: 20px;
+        }
+        .links a {
+          margin: 0 10px;
+          color: #0070f3;
+          text-decoration: none;
+        }
+        .links a:hover {
+          text-decoration: underline;
         }
       `}</style>
     </div>

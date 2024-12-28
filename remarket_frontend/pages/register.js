@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import Link from 'next/link';
 import { API_FULL_URL } from '../src/utils/constants';
 import Header from '../src/components/Header';
 import Footer from '../src/components/Footer';
@@ -40,7 +41,8 @@ const Register = () => {
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
 
-      router.push('/');
+      // Redirection après inscription réussie
+      router.push('/profile'); // Vous pouvez changer vers '/signin' ou '/' selon vos besoins
     } catch (error) {
       console.error('Registration Error:', error);
       setError('Failed to register. Please check your inputs and try again.');
@@ -90,6 +92,10 @@ const Register = () => {
           </div>
           <button type="submit">Register</button>
         </form>
+        <div className="links">
+          <Link href="/"><a>Home</a></Link>
+          <Link href="/signin"><a>Already have an account? Sign In</a></Link>
+        </div>
       </div>
 
       <Footer />
@@ -135,6 +141,18 @@ const Register = () => {
           color: red;
           text-align: center;
           margin-bottom: 10px;
+        }
+        .links {
+          text-align: center;
+          margin-top: 20px;
+        }
+        .links a {
+          margin: 0 10px;
+          color: #0070f3;
+          text-decoration: none;
+        }
+        .links a:hover {
+          text-decoration: underline;
         }
       `}</style>
     </div>

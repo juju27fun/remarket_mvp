@@ -42,7 +42,9 @@ const HomePage = () => {
       <div className="hero">
         <h1>Welcome to Remarket</h1>
         <p>Discover our range of products</p>
-        <Link href="/categories"><a className="btn">Browse Categories</a></Link>
+        <Link href="/"><a className="btn">Home</a></Link>
+        <Link href="/profile"><a className="btn">Profile</a></Link>
+        <Link href="/product/category"><a className="btn">Browse Categories</a></Link>
       </div>
       <div className="features">
         <h2>Featured Products</h2>
@@ -51,6 +53,9 @@ const HomePage = () => {
             <li key={product._id}>
               <Link href={`/product/${product._id}`}>
                 <a>{product.name}</a>
+              </Link>
+              <Link href={`/product/${product._id}`}>
+                <a className="btn">View Details</a>
               </Link>
             </li>
           ))}
@@ -66,11 +71,6 @@ const HomePage = () => {
         }
         .hero h1 {
           font-size: 2.5rem;
-          margin-bottom: 20px;
-        }
-        .hero p {
-          font-size: 1.2rem;
-          margin-bottom: 20px;
         }
         .btn {
           background-color: #0070f3;
@@ -78,42 +78,21 @@ const HomePage = () => {
           padding: 10px 20px;
           border-radius: 5px;
           text-decoration: none;
+          margin: 5px;
         }
         .features {
           text-align: center;
           padding: 50px 20px;
-          background: #f9f9f9;
         }
         .features h2 {
           margin-bottom: 20px;
         }
-        .feature-cards {
-          display: flex;
-          justify-content: space-around;
-          margin-top: 30px;
+        .features ul {
+          list-style: none;
+          padding: 0;
         }
-        .card {
-          background: white;
-          padding: 20px;
-          border-radius: 5px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          max-width: 300px;
-        }
-        .call-to-action {
-          text-align: center;
-          padding: 50px 20px;
-        }
-        .call-to-action h2 {
-          margin-bottom: 20px;
-        }
-        @media (max-width: 768px) {
-          .feature-cards {
-            flex-direction: column;
-            align-items: center;
-          }
-          .card {
-            margin-bottom: 20px;
-          }
+        .features li {
+          margin: 10px 0;
         }
       `}</style>
     </div>

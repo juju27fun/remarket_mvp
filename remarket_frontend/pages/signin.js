@@ -6,6 +6,7 @@ import Header from '../src/components/Header';
 import Footer from '../src/components/Footer';
 import { isEmailValid } from '../src/utils/validation';
 import apiService from '../src/services/apiService';
+import Link from 'next/link';
 
 const SignIn = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const SignIn = () => {
       const data = await apiService.postData('signin', formState);
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
-      router.push('/');
+      router.push('/profile'); // Redirection vers la page Profile après connexion réussie
     } catch (error) {
       setError('Failed to sign in. Check your credentials and try again.');
     }
@@ -69,6 +70,10 @@ const SignIn = () => {
           </div>
           <button type="submit">Sign In</button>
         </form>
+        <div className="links">
+          <Link href="/"><a>Home</a></Link>
+          <Link href="/register"><a>Don't have an account? Register</a></Link>
+        </div>
       </div>
 
       <Footer />
@@ -114,6 +119,18 @@ const SignIn = () => {
           color: red;
           text-align: center;
           margin-bottom: 10px;
+        }
+        .links {
+          text-align: center;
+          margin-top: 20px;
+        }
+        .links a {
+          margin: 0 10px;
+          color: #0070f3;
+          text-decoration: none;
+        }
+        .links a:hover {
+          text-decoration: underline;
         }
       `}</style>
     </div>

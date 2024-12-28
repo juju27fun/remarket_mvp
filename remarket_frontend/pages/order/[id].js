@@ -42,6 +42,10 @@ const OrderDetails = () => {
 
   return (
     <div>
+      <nav>
+        <Link href="/order">Order Index</Link>
+        <Link href="/order/summary">Order Summary</Link>
+      </nav>
       <h1>Order Details</h1>
       <p><strong>Order ID:</strong> {order._id}</p>
       <p><strong>Customer:</strong> {order.user.name} ({order.user.email})</p>

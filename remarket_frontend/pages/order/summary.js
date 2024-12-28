@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { API_FULL_URL } from '../../src/utils/constants';
 import { formatDate } from '../../src/utils/format';
 import {
@@ -7,6 +9,7 @@ import {
   isAuthenticated,
   refreshAccessToken
 } from '../../src/utils/auth';
+import Button from '../../src/components/Button';
 
 const OrderSummary = () => {
   const [summary, setSummary] = useState({
@@ -17,6 +20,7 @@ const OrderSummary = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -42,6 +46,11 @@ const OrderSummary = () => {
     fetchSummary();
   }, []);
 
+  const handlePayment = () => {
+    // Logic for handling payment
+    console.log('Payment confirmed');
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -52,53 +61,32 @@ const OrderSummary = () => {
 
   return (
     <div>
+      <nav>
+        <Link href="/order">Order Index</Link>
+        <Link href="/order/mine">My Orders</Link>
+      </nav>
       <h1>Order Summary</h1>
-      <h2>Total Users</h2>
-      <p>{summary.users[0]?.numUsers ?? 0}</p>
-
-      <h2>Total Orders</h2>
-      <p>{summary.orders[0]?.numOrders ?? 0}</p>
-
-      <h2>Total Sales</h2>
-      <p>${summary.orders[0]?.totalSales?.toFixed(2) ?? 0.00}</p>
-
-      <h2>Daily Orders</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Orders</th>
-            <th>Sales</th>
-          </tr>
-        </thead>
-        <tbody>
-          {summary.dailyOrders.map(day => (
-            <tr key={day._id}>
-              <td>{formatDate(day._id)}</td>
-              <td>{day.orders}</td>
-              <td>${day.sales.toFixed(2)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <h2>Product Categories</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Count</th>
-          </tr>
-        </thead>
-        <tbody>
-          {summary.productCategories.map(category => (
-            <tr key={category._id}>
-              <td>{category._id}</td>
-              <td>{category.count}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {summary.orders.length > 0 && (
+        <div>
+          <h2>Order Details</h2>
+          <p>Order ID: {summary.orders[0]._id}</p>
+          <p>Customer: {summary.orders[0].user.name}</p>
+          <p>Order Date: {formatDate(summary.orders[0].createdAt)}</p>
+          <p>Shipping Address: {summary.orders[0].shippingAddress.fullName}, {summary.orders[0].shippingAddress.address}, {summary.orders[0].shippingAddress.city}, {summary.orders[0].shippingAddress.postalCode}, {summary.orders[0].shippingAddress.country}</p>
+          <p>Payment Method: {summary.orders[0].paymentMethod}</p>
+          <h3>Items</h3>
+          <ul>
+            {summary.orders[0].orderItems.map(item => (
+              <li key={item._id}>
+                {item.name} - {item.qty} x ${item.price.toFixed(2)}
+              </li>
+            ))}
+          </ul>
+          <p>Total Price: ${summary.orders[0].totalPrice.toFixed(2)}</p>
+          <Button onClick={handlePayment}>Pay</Button>
+          <Button onClick={() => router.push(`/order/${summary.orders[0]._id}`)}>View Order Details</Button>
+        </div>
+      )}
     </div>
   );
 };
