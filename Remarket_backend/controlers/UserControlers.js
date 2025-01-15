@@ -94,25 +94,30 @@ const seedUsers = expressAsyncHandler(async (req, res) => {
 });
 
 const signin = expressAsyncHandler(async (req, res) => {
-  const user = await User.findOne({ email: req.body.email });
-  if (user) {
-    if (bcrypt.compareSync(req.body.password, user.password)) {
-      const { accessToken, refreshToken } = generateTokens(user);
-      
-      res.send({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        isAdmin: user.isAdmin,
-        isSeller: user.isSeller,
-        accessToken,
-        refreshToken,
-      });
-      
-      return;
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      if (bcrypt.compareSync(req.body.password, user.password)) {
+        const { accessToken, refreshToken } = generateTokens(user);
+        
+        res.send({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          isSeller: user.isSeller,
+          accessToken,
+          refreshToken,
+        });
+        
+        return;
+      }
     }
+    res.status(401).send({ message: 'Invalid email or password' });
+  } catch (error) {
+    console.error('Error during sign-in:', error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
-  res.status(401).send({ message: 'Invalid email or password' });
 });
 
 const register = expressAsyncHandler(async (req, res) => {
@@ -208,6 +213,26 @@ const updateUser = expressAsyncHandler(async (req, res) => {
   }
 });
 
+const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user) {
+      res.send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isSeller: user.isSeller,
+        seller: user.isSeller ? user.seller : null,
+      });
+    } else {
+      res.status(404).send({ message: 'User Not Found' });
+    }
+  } catch (error) {
+    res.status(500).send({ message: 'Error in fetching user profile' });
+  }
+};
+
 module.exports = {
   getTopSellers,
   seedUsers,
@@ -220,4 +245,5 @@ module.exports = {
   updateUser,
   refreshAccessToken,
   updateKYCDetails,
+  getProfile, 
 };

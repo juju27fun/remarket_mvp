@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import apiService from '../../src/services/apiService';
 import Link from 'next/link';
+import axios from 'axios';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const ProductDetails = () => {
   const router = useRouter();
@@ -14,8 +16,8 @@ const ProductDetails = () => {
     if (id) {
       const fetchProduct = async () => {
         try {
-          const productData = await apiService.getData(`products/${id}`);
-          setProduct(productData);
+          const response = await axios.get(`${API_FULL_URL}/products/${id}`);
+          setProduct(response.data);
         } catch (err) {
           setError(`Error fetching product details: ${err.message}`);
         } finally {
@@ -44,22 +46,8 @@ const ProductDetails = () => {
     <div>
       <h1>{product.name}</h1>
       <p>{product.description}</p>
-      <Link href="/"><a className="btn">Home</a></Link>
-      <Link href="/product"><a className="btn">Back to Products</a></Link>
-      <Link href="/product/category"><a className="btn">Browse Categories</a></Link>
-      <Link href={`/reviews/${id}`}><a className="btn">View Reviews</a></Link>
-      <button onClick={handleAddToCart} className="btn">Add to Cart</button>
-      <Link href="/order/create"><a className="btn">Order Now</a></Link>
-      <style jsx>{`
-        .btn {
-          background-color: #0070f3;
-          color: white;
-          padding: 10px 20px;
-          border-radius: 5px;
-          text-decoration: none;
-          margin: 5px;
-        }
-      `}</style>
+      <p>Price: ${product.price}</p>
+      <Link href="/">Back to products</Link>
     </div>
   );
 };

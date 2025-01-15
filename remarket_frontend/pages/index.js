@@ -23,7 +23,7 @@ const HomePage = () => {
         <section className="hero">
           <h1>Welcome to Remarket</h1>
           <p>Your go-to platform for all your selling needs.</p>
-          <Link href="/register"><a className="btn">Get Started</a></Link>
+          <Link href="/register" className="btn"> Get Started</Link>
         </section>
 
         <section className="features">
@@ -46,44 +46,44 @@ const HomePage = () => {
 
         <section className="call-to-action">
           <h2>Ready to get started?</h2>
-          <Link href="/register"><a className="btn">Sign Up Now</a></Link>
+          <Link href="/register" className="btn">Sign Up Now</Link>
         </section>
 
         <section className="signin">
           <h2>Already have an account?</h2>
-          <Link href="/signin"><a className="btn">Sign In</a></Link>
+          <Link href="/signin" className="btn">Sign In</Link>
         </section>
 
         {isAuthenticated && (
           <>
             <section className="profile">
               <h2>My Account</h2>
-              <Link href="/profile"><a className="btn">Profile</a></Link>
+              <Link href="/profile" className="btn">Profile</Link>
             </section>
 
             <section className="orders">
               <h2>My Orders</h2>
-              <Link href="/order"><a className="btn">Orders</a></Link>
+              <Link href="/order" className="btn">Orders</Link>
             </section>
           </>
         )}
 
         <section className="products">
           <h2>Products</h2>
-          <Link href="/product"><a className="btn">All Products</a></Link>
-          <Link href="/product/category"><a className="btn">Product Categories</a></Link>
+          <Link href="/product" className="btn">All Products</Link>
+          <Link href="/product/category" className="btn">Product Categories</Link>
         </section>
 
         {isAdmin && (
           <section className="admin-products">
             <h2>Admin Products</h2>
-            <Link href="/admin/products/index"><a className="btn">Manage Products</a></Link>
+            <Link href="/admin/products/index" className="btn">Manage Products</Link>
           </section>
         )}
 
         <section className="upload">
           <h2>Upload</h2>
-          <Link href="/upload"><a className="btn">Upload Files</a></Link>
+          <Link href="/upload" className="btn">Upload Files</Link>
         </section>
       </main>
 

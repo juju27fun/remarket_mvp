@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import apiService from '../../src/services/apiService';
+import axios from 'axios';
 import Link from 'next/link';
+import { API_FULL_URL } from '../../src/utils/constants';
 
 const CategoryPage = () => {
   const [categories, setCategories] = useState([]);
@@ -12,70 +13,30 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const categoryData = await apiService.getData('products/categories');
-        setCategories(categoryData);
+        const response = await axios.get(`${API_FULL_URL}/products/categories`);
+        setCategories(response.data);
       } catch (err) {
         setError(`Error fetching categories: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
-
     fetchCategories();
   }, []);
 
-  const fetchProductsByCategory = async (category) => {
-    setLoading(true);
-    try {
-      const productData = await apiService.getData(`products?category=${category}`);
-      setProducts(productData);
-      setSelectedCategory(category);
-    } catch (err) {
-      setError(`Error fetching products: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>
-      <h1>Product Categories</h1>
-      <Link href="/"><a className="btn">Home</a></Link>
-      <Link href="/product"><a className="btn">Back to Products</a></Link>
+      <h1>Categories</h1>
       <ul>
-        {categories.map((category, index) => (
-          <li key={index}>
-            <button onClick={() => fetchProductsByCategory(category)}>{category}</button>
+        {categories.map((category) => (
+          <li key={category}>
+            <Link href={`/product/category/${category}`}>{category}</Link>
           </li>
         ))}
       </ul>
-      {selectedCategory && (
-        <div>
-          <h2>Products in {selectedCategory}</h2>
-          <ul>
-            {products.map((product) => (
-              <li key={product._id}>
-                <Link href={`/product/${product._id}`}>
-                  <a>{product.name}</a>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-      <style jsx>{`
-        .btn {
-          background-color: #0070f3;
-          color: white;
-          padding: 10px 20px;
-          border-radius: 5px;
-          text-decoration: none;
-          margin: 5px;
-        }
-      `}</style>
     </div>
   );
 };

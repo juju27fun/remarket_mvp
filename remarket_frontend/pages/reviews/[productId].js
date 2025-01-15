@@ -49,9 +49,9 @@ const ReviewsPage = () => {
   return (
     <div>
       <h1>Reviews for {product.name}</h1>
-      <Link href="/"><a className="btn">Home</a></Link>
-      <Link href="/product"><a className="btn">Back to Products</a></Link>
-      <Link href={`/product/${productId}`}><a className="btn">Back to Product</a></Link>
+      <Link href="/" className="btn">Home</Link>
+      <Link href="/product" className="btn">Back to Products</Link>
+      <Link href={`/product/${productId}`}className="btn">Back to Product</Link>
       <ul>
         {reviews.map((review, index) => (
           <li key={index}>

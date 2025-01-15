@@ -42,9 +42,9 @@ const HomePage = () => {
       <div className="hero">
         <h1>Welcome to Remarket</h1>
         <p>Discover our range of products</p>
-        <Link href="/"><a className="btn">Home</a></Link>
-        <Link href="/profile"><a className="btn">Profile</a></Link>
-        <Link href="/product/category"><a className="btn">Browse Categories</a></Link>
+        <Link href="/" className="btn">Home</Link>
+        <Link href="/profile" className="btn">Profile</Link>
+        <Link href="/product/category" className="btn">Browse Categories</Link>
       </div>
       <div className="features">
         <h2>Featured Products</h2>
@@ -52,10 +52,10 @@ const HomePage = () => {
           {products.map((product) => (
             <li key={product._id}>
               <Link href={`/product/${product._id}`}>
-                <a>{product.name}</a>
+                {product.name}
               </Link>
-              <Link href={`/product/${product._id}`}>
-                <a className="btn">View Details</a>
+              <Link href={`/product/${product._id}`}
+                 className="btn">View Details
               </Link>
             </li>
           ))}

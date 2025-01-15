@@ -177,10 +177,18 @@ const Profile = () => {
         </form>
         <button onClick={handleLogout}>Logout</button>
         <div className="links">
-          <Link href="/"><a>Home</a></Link>
-          <Link href="/product"><a>Browse Products</a></Link>
-          <Link href="/order"><a>View Orders</a></Link>
-          <Link href="/order/mine"><a>My Orders</a></Link>
+          <Link href="/home">
+          home
+          </Link>
+          <Link href="/product">
+          Browse Products
+          </Link>
+          <Link href="/order">
+          View Orders
+          </Link>
+          <Link href="/order/mine">
+          My Orders
+          </Link>
         </div>
       </div>
 

@@ -41,10 +41,23 @@ const Register = () => {
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
 
-      // Redirection après inscription réussie
-      router.push('/profile'); // Vous pouvez changer vers '/signin' ou '/' selon vos besoins
+      // Fetch profile data after successful registration
+      try {
+        const profileResponse = await axios.get(`${API_FULL_URL}/users/${data._id}`, {
+          headers: {
+            Authorization: `Bearer ${data.accessToken}`,
+          },
+        });
+        const profileData = profileResponse.data;
+
+        // Redirect to the profile page after successful registration and profile fetch
+        router.push('/profile');
+      } catch (profileError) {
+        console.error('Profile fetch error:', profileError.response ? profileError.response.data : profileError.message);
+        setError('Failed to fetch profile data.');
+      }
     } catch (error) {
-      console.error('Registration Error:', error);
+      console.error('Registration Error:', error.response ? error.response.data : error.message);
       setError('Failed to register. Please check your inputs and try again.');
     }
   };
@@ -93,8 +106,8 @@ const Register = () => {
           <button type="submit">Register</button>
         </form>
         <div className="links">
-          <Link href="/"><a>Home</a></Link>
-          <Link href="/signin"><a>Already have an account? Sign In</a></Link>
+          <Link href="/">Home</Link>
+          <Link href="/signin">Already have an account? Sign In</Link>
         </div>
       </div>
 

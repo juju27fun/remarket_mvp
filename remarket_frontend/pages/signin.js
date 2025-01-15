@@ -5,15 +5,13 @@ import { useRouter } from 'next/router';
 import Header from '../src/components/Header';
 import Footer from '../src/components/Footer';
 import { isEmailValid } from '../src/utils/validation';
-import apiService from '../src/services/apiService';
+import axios from 'axios';
+import { API_FULL_URL } from '../src/utils/constants';
 import Link from 'next/link';
 
 const SignIn = () => {
   const router = useRouter();
-  const [formState, setFormState] = useState({
-    email: '',
-    password: '',
-  });
+  const [formState, setFormState] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
@@ -29,11 +27,28 @@ const SignIn = () => {
     }
 
     try {
-      const data = await apiService.postData('signin', formState);
+      const response = await axios.post(`${API_FULL_URL}/users/signin`, formState);
+      const data = response.data;
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
-      router.push('/profile'); // Redirection vers la page Profile après connexion réussie
+
+      // Fetch profile data after successful login
+      try {
+        const profileResponse = await axios.get(`${API_FULL_URL}/users/${data._id}`, {
+          headers: {
+            Authorization: `Bearer ${data.accessToken}`,
+          },
+        });
+        const profileData = profileResponse.data;
+
+        // Redirect to the profile page after successful sign-in and profile fetch
+        router.push('/profile');
+      } catch (profileError) {
+        console.error('Profile fetch error:', profileError.response ? profileError.response.data : profileError.message);
+        setError('Failed to fetch profile data.');
+      }
     } catch (error) {
+      console.error('Sign-in error:', error.response ? error.response.data : error.message);
       setError('Failed to sign in. Check your credentials and try again.');
     }
   };
@@ -71,8 +86,12 @@ const SignIn = () => {
           <button type="submit">Sign In</button>
         </form>
         <div className="links">
-          <Link href="/"><a>Home</a></Link>
-          <Link href="/register"><a>Don't have an account? Register</a></Link>
+          <Link href="/">
+          Home
+          </Link>
+          <Link href="/register">
+          Don't have an account? Register
+          </Link>
         </div>
       </div>
 
