@@ -8,6 +8,7 @@ import { isEmailValid } from '../src/utils/validation';
 import axios from 'axios';
 import { API_FULL_URL } from '../src/utils/constants';
 import Link from 'next/link';
+import { getAccessToken, getRefreshToken } from '../src/utils/auth';
 
 const SignIn = () => {
   const router = useRouter();
@@ -29,17 +30,16 @@ const SignIn = () => {
     try {
       const response = await axios.post(`${API_FULL_URL}/users/signin`, formState);
       const data = response.data;
-      localStorage.setItem('accessToken', data.accessToken);
-      localStorage.setItem('refreshToken', data.refreshToken);
+      const AccessToken = getAccessToken();
+      //const RefreshToken = getRefreshToken();
 
       // Fetch profile data after successful login
       try {
         const profileResponse = await axios.get(`${API_FULL_URL}/users/${data._id}`, {
           headers: {
-            Authorization: `Bearer ${data.accessToken}`,
+            Authorization: `Bearer ${AccessToken}`,
           },
         });
-        const profileData = profileResponse.data;
 
         // Redirect to the profile page after successful sign-in and profile fetch
         router.push('/profile');

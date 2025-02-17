@@ -98,7 +98,7 @@ const Profile = () => {
       setLoading(false);
     }
   };
-
+  
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
@@ -177,7 +177,7 @@ const Profile = () => {
         </form>
         <button onClick={handleLogout}>Logout</button>
         <div className="links">
-          <Link href="/home">
+          <Link href="/">
           home
           </Link>
           <Link href="/product">

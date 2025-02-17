@@ -1,7 +1,5 @@
-// remarket_frontend/src/hooks/useAuth.js
-
 import { useState, useEffect } from 'react';
-import { isAuthenticated, refreshAccessToken, logout } from '../utils/auth';
+import { isAuthenticated, refreshAccessToken, logout, getAccessToken, verifyAccessToken } from '../utils/auth';
 
 export const useAuth = () => {
   const [authStatus, setAuthStatus] = useState({
@@ -11,12 +9,21 @@ export const useAuth = () => {
 
   useEffect(() => {
     const checkAuthStatus = async () => {
+      console.log('Checking auth status in useAuth hook...');
       if (isAuthenticated()) {
         try {
           await refreshAccessToken();
-          // Assuming you have a way to check if the user is an admin
-          const isAdmin = checkIfUserIsAdmin(); // Implement this function based on your requirements
-          setAuthStatus({ isAuthenticated: true, isAdmin });
+          const accessToken = getAccessToken();
+          if (accessToken) {
+            const decodedToken = verifyAccessToken(accessToken);
+            if (decodedToken) {
+              console.log('User is authenticated in useAuth hook');
+              setAuthStatus({
+                isAuthenticated: true,
+                isAdmin: decodedToken.isAdmin,
+              });
+            }
+          }
         } catch (error) {
           console.error('Error refreshing access token:', error);
           logout();
@@ -28,14 +35,4 @@ export const useAuth = () => {
   }, []);
 
   return authStatus;
-};
-
-// Implement this function based on your requirements
-const checkIfUserIsAdmin = () => {
-  // Example implementation
-  const token = localStorage.getItem('accessToken');
-  if (!token) return false;
-
-  const decoded = jwt.decode(token);
-  return decoded && decoded.isAdmin;
 };

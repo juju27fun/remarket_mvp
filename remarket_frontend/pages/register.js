@@ -29,15 +29,10 @@ const Register = () => {
       setError('Invalid email format.');
       return;
     }
-    if (!isPasswordStrong(formState.password)) {
-      setError('Password must be at least 8 characters long and include letters and digits.');
-      return;
-    }
 
     try {
       const response = await axios.post(`${API_FULL_URL}/users/register`, formState);
       const data = response.data;
-
       localStorage.setItem('accessToken', data.accessToken);
       localStorage.setItem('refreshToken', data.refreshToken);
 

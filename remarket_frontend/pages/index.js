@@ -1,14 +1,35 @@
-// remarket_frontend/pages/index.js
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Header from '../src/components/Header';
 import Footer from '../src/components/Footer';
 import { useAuth } from '../src/hooks/useAuth';
 
 const HomePage = () => {
   const { isAuthenticated, isAdmin } = useAuth(); // Custom hook to check authentication and admin status
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    console.log('useEffect in HomePage triggered');
+    const checkAuth = async () => {
+      console.log('Checking authentication status...');
+      if (!isAuthenticated) {
+        console.log('User is not authenticated, redirecting to signin...');
+        await router.push('/signin');
+      } else {
+        console.log('User is authenticated');
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [isAuthenticated, router]);
+
+  if (loading) {
+    return <p>Loading...</p>; // Show a loading message while checking authentication
+  }
 
   return (
     <div>
