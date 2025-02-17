@@ -42,43 +42,6 @@ const updateKYCDetails = expressAsyncHandler(async (req, res) => {
   }
 });
 
-const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || 'refreshsecret';
-
-
-const verifyRefreshToken = (token) => {
-  try {
-    const decoded = jwt.verify(token, REFRESH_TOKEN_SECRET);
-    return decoded;
-  } catch (error) {
-    return null;
-  }
-};
-
-const refreshAccessToken = async (req, res) => {
-  const authorization = req.headers.authorization;
-  if (authorization) {
-    const refreshToken = authorization.slice(7, authorization.length); // Bearer XXXXXX
-    try {
-      const decoded = verifyRefreshToken(refreshToken);
-      if (!decoded) {
-        throw new Error('Invalid refresh token');
-      }
-      
-      // Fetch the user from the database using the _id from the decoded token
-      const user = await User.findById(decoded._id);
-      if (!user) {
-        throw new Error('User not found');
-      }
-
-      const { accessToken } = generateTokens(user);
-      res.json({ accessToken });
-    } catch (error) {
-      res.status(401).json({ message: error.message });
-    }
-  } else {
-    res.status(401).json({ message: 'No refresh token provided' });
-  }
-};
 
 const getTopSellers = expressAsyncHandler(async (req, res) => {
   const topSellers = await User.find({ isSeller: true })
@@ -98,27 +61,24 @@ const signin = expressAsyncHandler(async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       if (bcrypt.compareSync(req.body.password, user.password)) {
-        const { accessToken, refreshToken } = generateTokens(user);
-        
-        res.send({
+        generateTokens(user, res); 
+
+        return res.status(200).json({
           _id: user._id,
           name: user.name,
           email: user.email,
           isAdmin: user.isAdmin,
           isSeller: user.isSeller,
-          accessToken,
-          refreshToken,
         });
-        
-        return;
       }
     }
-    res.status(401).send({ message: 'Invalid email or password' });
+    res.status(401).json({ message: 'Invalid email or password' });
   } catch (error) {
-    console.error('Error during sign-in:', error);
-    res.status(500).send({ message: 'Internal Server Error' });
+    console.error("Sign-in error:", error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 const register = expressAsyncHandler(async (req, res) => {
   const user = new User({
@@ -128,7 +88,7 @@ const register = expressAsyncHandler(async (req, res) => {
   });
 
   const createdUser = await user.save();
-  const { accessToken, refreshToken } = generateTokens(createdUser);
+  generateTokens(createdUser, res);
 
   res.send({
     _id: createdUser._id,
@@ -136,8 +96,6 @@ const register = expressAsyncHandler(async (req, res) => {
     email: createdUser.email,
     isAdmin: createdUser.isAdmin,
     isSeller: createdUser.isSeller,
-    accessToken,
-    refreshToken,
   });
 });
 
@@ -164,7 +122,7 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
       user.password = bcrypt.hashSync(req.body.password, 8);
     }
     const updatedUser = await user.save();
-    const { accessToken, refreshToken } = generateTokens(updatedUser);
+    generateTokens(updatedUser, res);
 
     res.send({
       _id: updatedUser._id,
@@ -172,8 +130,6 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
       email: updatedUser.email,
       isAdmin: updatedUser.isAdmin,
       isSeller: updatedUser.isSeller,
-      accessToken,
-      refreshToken,
     });
   } else {
     res.status(404).send({ message: 'User not found' });
@@ -243,7 +199,6 @@ module.exports = {
   getUsers,
   deleteUser,
   updateUser,
-  refreshAccessToken,
   updateKYCDetails,
   getProfile, 
 };

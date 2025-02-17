@@ -5,7 +5,8 @@ const nodemailer = require('nodemailer');
 const ACCESS_TOKEN_SECRET = process.env.JWT_ACCESS_SECRET || 'somethingsecret';
 const REFRESH_TOKEN_SECRET = process.env.JWT_REFRESH_SECRET || 'refreshsecret';
 
-const generateTokens = (user) => {
+const generateTokens = (user, res) => {
+  // Create the access token with a 1-hour expiry
   const accessToken = jwt.sign(
     {
       _id: user._id,
@@ -18,39 +19,129 @@ const generateTokens = (user) => {
     { expiresIn: '1h' }
   );
 
+  // Create the refresh token with a 2-week expiry
   const refreshToken = jwt.sign(
     { _id: user._id },
     REFRESH_TOKEN_SECRET,
     { expiresIn: '2w' }
   );
 
+  // Set cookie options for the access token
+  const accessCookieOptions = {
+    expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour in milliseconds
+    httpOnly: true, // Helps prevent XSS attacks
+  };
+
+  // Set cookie options for the refresh token
+  const refreshCookieOptions = {
+    expires: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2 weeks in milliseconds
+    httpOnly: true,
+  };
+
+  // In production, ensure cookies are only sent over HTTPS
+  if (process.env.NODE_ENV === 'production') {
+    accessCookieOptions.secure = true;
+    refreshCookieOptions.secure = true;
+  }
+
+  // Set the tokens as cookies on the response
+  res.cookie('accessToken', accessToken, accessCookieOptions);
+  res.cookie('refreshToken', refreshToken, refreshCookieOptions);
+
   return { accessToken, refreshToken };
 };
 
-const verifyAccessToken = (token) => {
+
+const verifyAccessToken = (req) => {
+  // Extract the token from the cookies (assuming it's stored under "accessToken")
+  const token = req.cookies.accessToken;
+  
+  // If no token is present, return null or handle it as needed
+  if (!token) {
+    return null;
+  }
+
   try {
+    // Verify and return the decoded token payload
     return jwt.verify(token, ACCESS_TOKEN_SECRET);
+  } catch (error) {
+    // Handle the error as needed; here we return null
+    return null;
+  }
+};
+
+const verifyRefreshToken = (req) => {
+  try {
+    const token = req.cookies.refreshToken;
+    const decoded = jwt.verify(token, REFRESH_TOKEN_SECRET);
+    return decoded;
   } catch (error) {
     return null;
   }
 };
 
-
-const isAuth = (req, res, next) => {
-  const authorization = req.headers.authorization;
-  if (authorization) {
-    const token = authorization.slice(7, authorization.length); // Bearer XXXXXX
-    const decoded = verifyAccessToken(token);
-    if (decoded) {
-      req.user = decoded;
-      next();
-    } else {
-      res.status(401).send({ message: 'Invalid Token' });
+const refreshAccessToken = async (req, res) => {
+  // Retrieve the refresh token from cookies
+  const refreshToken = req.cookies.refreshToken;
+  
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'No refresh token provided' });
+  }
+  
+  try {
+    // Verify the refresh token (assumes verifyRefreshToken is implemented)
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded) {
+      throw new Error('Invalid refresh token');
     }
-  } else {
-    res.status(401).send({ message: 'No Token' });
+    
+    // Fetch the user from the database using the _id from the decoded token
+    const user = await User.findById(decoded._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    
+    // Generate a new access token (with a 1-hour expiry)
+    const newAccessToken = jwt.sign(
+      {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isSeller: user.isSeller,
+      },
+      ACCESS_TOKEN_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    // Define cookie options for the new access token
+    const accessCookieOptions = {
+      expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
+      httpOnly: true, // Prevents client-side JS from accessing the cookie
+    };
+    if (process.env.NODE_ENV === 'production') {
+      accessCookieOptions.secure = true; // Ensures cookie is sent over HTTPS in production
+    }
+    
+    // Set the new access token as a cookie
+    res.cookie('accessToken', newAccessToken, accessCookieOptions);
+    
+    // Optionally, send a success response
+    res.json({ message: 'Access token refreshed successfully' });
+  } catch (error) {
+    res.status(401).json({ message: error.message });
   }
 };
+
+const isAuth = (req, res, next) => {
+  // Now that cookie-parser is set up, req.cookies should be defined
+  const decoded = verifyAccessToken(req);
+
+  req.user = decoded;
+  next();
+};
+
+
 
 const isAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
@@ -164,10 +255,12 @@ const payOrderEmailTemplate = (order) => {
 
 module.exports = {
   generateTokens,
+  verifyAccessToken,
   isAuth,
   isAdmin,
   isSeller,
   isSellerOrAdmin,
   sendOrderEmail,
+  refreshAccessToken,
   payOrderEmailTemplate,
 };

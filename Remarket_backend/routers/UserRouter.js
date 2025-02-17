@@ -9,12 +9,11 @@ const {
   getUsers,
   deleteUser,
   updateUser,
-  refreshAccessToken,
   updateKYCDetails,
   getProfile,
 } = require('../controlers/UserControlers.js');
 const expressAsyncHandler = require('express-async-handler');
-const { isAdmin, isAuth} = require('../utils.js');
+const { isAdmin, isAuth, refreshAccessToken } = require('../utils.js');
 
 const userRouter = express.Router();
 

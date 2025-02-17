@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const path = require('path');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 if (process.env.NODE_ENV === 'development') {
@@ -23,6 +24,7 @@ const uploadRouter = require('./routers/uploadRouter');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(`${__dirname}/public`));
+app.use(cookieParser());
 // Ajoutez cette ligne si vous avez un dossier d'uploads
 // app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
